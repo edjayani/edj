@@ -1,0 +1,92 @@
+
+import csv
+
+with open("Corp_Summary.csv", encoding='utf-8') as r_file:
+    # Создаем объект reader, указываем символ-разделитель ";"
+    file_reader = csv.reader(r_file, delimiter = ";")
+    file_rows = []
+    for row in file_reader:
+        file_rows.append(row)
+    file_rows = file_rows[1:]
+
+    DEPART = 1
+
+    def department_hierarchy():
+        dep_names = []            #лист с названиями всех департаментов
+        d_groups = dict()         #словарь, где ключи - департаменты, а значения - лист с командами
+        for row in file_rows:
+            if row[DEPART] not in dep_names:
+                dep_names.append(row[DEPART])
+                d_groups[row[DEPART]] = [row[2]]
+            else:
+                if row[2] not in d_groups[row[DEPART]]:
+                    d_groups[row[DEPART]].append(row[2])
+        return d_groups
+
+    def hierarchy_print(dep_hier: dict):
+        print('Иерархия команд:')
+        for key in dep_hier:
+            print(f' Департамент {key}:')
+            for group in dep_hier[key]:
+                print(f' --{group}')
+        return
+
+    GR_COUNT = 0
+    GR_SALARY = 1
+    GR_SAL_MIN = 2
+    GR_SAL_MAX = 3
+
+    def department_report():
+        dep_names = []  # лист с названиями всех департаментов
+        d_groups = dict()  # словарь вида департамент: параметры
+        for row in file_rows:
+            if row[DEPART] not in dep_names:
+                dep_names.append(row[DEPART])
+                d_groups[row[DEPART]] = [0, int(row[5]), int(row[5]), int(row[5]), row[2]]
+            else:
+                if row[2] not in d_groups[row[1]]:
+                    dep = row[DEPART]
+                    d_groups[dep].append(row[2])
+                    d_groups[dep][GR_COUNT] += 1 #счётчик работников
+                    d_groups[dep][GR_SALARY] += int(row[5]) #увеличиваем суммарную зп
+                    if int(row[5]) > d_groups[dep][GR_SAL_MAX]: # если зп больше макс, то меняем макс
+                        d_groups[dep][GR_SAL_MAX] = int(row[5])
+                    if int(row[5]) < d_groups[dep][GR_SAL_MIN]: # если зп меньше мин, то меняем мин
+                        d_groups[dep][GR_SAL_MIN] = int(row[5])
+                else:
+                    d_groups[dep][GR_COUNT] += 1  # сётчик работников
+                    d_groups[dep][GR_SALARY] += int(row[5])  # увеличиваем суммарную зп
+                    if int(row[5]) > d_groups[dep][GR_SAL_MAX]: # если зп больше макс, то меняем макс
+                        d_groups[dep][GR_SAL_MAX] = int(row[5])
+                    if int(row[5]) < d_groups[dep][GR_SAL_MIN]: # если зп меньше мин, то меняем мин
+                        d_groups[dep][GR_SAL_MIN] = int(row[5])
+        return d_groups
+
+    def dep_report_print(dep_rep: dict):
+        print('Отчёт по департаментам:')
+        for key in dep_rep:
+            print(f' Департамент {key}:')
+            print(f'  --Количество человек: {dep_rep[key][0]};')
+            print(f'  --Средняя зарплата: {dep_rep[key][1] / dep_rep[key][0]};')
+            print(f'  --Минимальная зарплата {dep_rep[key][2]};')
+            print(f'  --Максимальная зарплата {dep_rep[key][3]}')
+            print('  Список команд:')
+            for i in range(2, len(dep_rep[key])):
+                print(f'   --{dep_rep[key][i]}')
+
+
+    print('Какой функцией Вы хотите воспользоваться?')
+    print('1. Вывести иерархию команд')
+    print('2. Вывести сводный отчёт по департаментам')
+    print('3. Сохранить сводный отчёт')
+    print('Введите номер функции')
+
+    flag = input()
+    if flag == '1':
+        hierarchy_print(department_hierarchy())
+    elif flag == '2':
+        dep_report_print(department_report())
+    else:
+        with open('sw_data_new.csv', 'w') as f:
+            writer = csv.writer(f, quoting=csv.QUOTE_NONNUMERIC)
+            writer.writerows(department_report())
