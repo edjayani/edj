@@ -1,0 +1,31 @@
+
+class CountVectorizer:
+
+    def __init__(self, lowercase: list = True):
+        self.lowercase = lowercase
+        self._vocabulary = []
+        self.fit_matrix = []
+
+    def get_feature_names(self):
+        for phrase in self.lowercase:
+            self._vocabulary.append(list(set(phrase.lower.split())))
+        return self._vocabulary.items()
+
+    def fit_transform(self):   #пока не могу придумать, как править так, чтобы читался массив
+        for phrase in self.lowercase:
+            voc_count = [0 for i in range(len(self.vocabulary))]
+            for word in phrase.lower:
+                voc_count[self._vocabulary.index(word)] += 1
+            self.fit_matrix.append(voc_count)
+        return(self.fit_matrix)
+
+
+corpus = [
+ 'Crock Pot Pasta Never boil pasta again',
+ 'Pasta Pomodoro Fresh ingredients Parmesan to taste'
+]
+vectorizer = CountVectorizer()
+count_matrix = vectorizer.fit_transform(corpus)
+print(vectorizer.get_feature_names())
+print(count_matrix)
+
