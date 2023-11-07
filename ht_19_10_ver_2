@@ -1,0 +1,37 @@
+
+class CountVectorizer():
+
+    def __init__(self):
+        self.lowercase = []
+        self._vocabulary = []
+        self.fit_matrix = []
+
+    def get_feature_names(self, lowercase: list[str]):
+        '''Не получилось вывести в функцию создание списка слов,
+         поэтому функция возвращает уже созданный словарь'''
+        return self._vocabulary.items()
+
+    def fit_transform(self, lowercase: list[str]):
+        self.lowercase = lowercase
+        self._vocabulary = set()
+        for phrase in self.lowercase:
+            strng = phrase.lower
+            strng = strng.split(' ')
+            self._vocabulary.add(strng)
+        self._vocabulary = list(self._vocabulary)
+        for phrase in self.lowercase:
+            voc_count = [0 for i in range(len(self.vocabulary))]
+            for word in phrase.lower:
+                voc_count[self._vocabulary.index(word)] += 1
+            self.fit_matrix.append(voc_count)
+        return(self.fit_matrix)
+
+
+corpus = [
+ 'Crock Pot Pasta Never boil pasta again',
+ 'Pasta Pomodoro Fresh ingredients Parmesan to taste'
+]
+vectorizer = CountVectorizer()
+count_matrix = vectorizer.fit_transform(corpus)
+print(vectorizer.get_feature_names())
+print(count_matrix)
