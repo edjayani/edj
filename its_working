@@ -1,0 +1,52 @@
+
+class CountVectorizer():
+
+    def __init__(self):
+        self.lowercase = []
+        self._vocabulary = []
+        self.fit_matrix = []
+
+    def get_feature_names(self) -> list[str]:
+        '''Не получилось вывести в функцию создание списка слов,
+         поэтому функция возвращает уже созданный словарь'''
+        return self._vocabulary
+
+    def fit_transform(self, lowercase: list[str]) -> list[list[int]]:
+        '''
+        lowercase - исходные данные
+        Сначала мы построчно опускаем симолы и сохраняем массив всех слов,
+        Далее для каждой строки создаём нулевой массив,по длине равный массиву всех слов,
+        И после записываем туда количество встреч каждого слова в строке
+        Соединяем получившиеся массивы в один двойной массив fit_matrix
+        '''
+        self.lowercase = lowercase
+        self._vocabulary = set()
+        for phrase in self.lowercase:
+            strng = phrase.lower()
+            strng = strng.split(' ')
+            self._vocabulary.update(strng)
+        self._vocabulary = list(self._vocabulary)
+        for phr in self.lowercase:
+            phrase = phr.lower()
+            voc_count = [0 for i in range(len(self._vocabulary))]
+            for word in phrase.split():
+                voc_count[self._vocabulary.index(word)] += 1
+            self.fit_matrix.append(voc_count)
+        return(self.fit_matrix)
+
+
+corpus = [
+ 'Crock Pot Pasta Never boil pasta again',
+ 'Pasta Pomodoro Fresh ingredients Parmesan to taste'
+]
+vectorizer = CountVectorizer()
+count_matrix = vectorizer.fit_transform(corpus)
+feature_names = vectorizer.get_feature_names()
+for word in feature_names:
+    print(word, end = ' ')
+print()
+for row in count_matrix:
+    print(row)
+
+
+
