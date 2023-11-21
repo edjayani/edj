@@ -1,0 +1,110 @@
+
+from math import log
+
+
+class CountVectorizer():
+
+    def __init__(self):
+        self.lowercase = []
+        self._vocabulary = []
+        self.fit_matrix = []
+
+    def get_feature_names(self) -> list[str]:
+        '''Не получилось вывести в функцию создание списка слов,
+         поэтому функция возвращает уже созданный словарь'''
+        return self._vocabulary
+
+    def fit_transform(self, lowercase: list[str]) -> list[list[int]]:
+        '''
+        lowercase - исходные данные
+        Сначала мы построчно опускаем симолы и сохраняем массив всех слов,
+        Далее для каждой строки создаём нулевой массив,по длине равный массиву всех слов,
+        И после записываем туда количество встреч каждого слова в строке
+        Соединяем получившиеся массивы в один двойной массив fit_matrix
+        '''
+        self.lowercase = lowercase
+        self._vocabulary = set()
+        for phrase in self.lowercase:
+            print(phrase)
+            strng = phrase.lower()
+            strng = strng.split(' ')
+            self._vocabulary.update(strng)
+        self._vocabulary = list(self._vocabulary)
+        self.fit_matrix = []
+        for phr in self.lowercase:
+            phrase = phr.lower()
+            voc_count = [0 for i in range(len(self._vocabulary))]
+            for word in phrase.split():
+                voc_count[self._vocabulary.index(word)] += 1
+            self.fit_matrix.append(voc_count)
+        return self.fit_matrix
+
+
+class TFIdTransformer:
+
+    def __init__(self):
+        pass
+
+    def fit_trans(self, matrix: list[list[int]]):
+        tf = self.tf_trans(matrix)
+        idf = self.idf_trans(matrix)
+        result = []
+        for row in tf:
+            result.append([round(a * b, 3) for a, b in zip(row, idf)])
+        return result
+
+    def tf_trans(matrix: list[list[int]]) -> list[list[float]]:
+        return [[round(x / sum(row), 3) for x in row] for row in matrix]
+
+    def idf_trans(matrix: list[list[int]]) -> list[list[float]]:
+        doc_num = len(matrix)
+        idf_matrix = [sum([1 if row[i] else 0 for row in matrix]) for i in range(len(matrix[0]))]
+        idf_matrix = [log((doc_num + 1) / (el + 1)) + 1 for el in idf_matrix]
+        return idf_matrix
+
+
+class TFidVectorizer(CountVectorizer):
+    def __init__(self, tf_class = TFIdTransformer):
+        self.transformer = tf_class()
+
+    def fit_transform(self, lowercase: list[str]):
+        count_matrix_numbers = super().fit_transform(lowercase)
+        print(count_matrix_numbers)
+        return self.transformer.fit_trans(count_matrix_numbers)
+
+
+def tf_transform(tf_list: list[list[int]]) -> list[list[float]]:
+    tf_freq = []
+    for vec in tf_list:
+        word_num = sum(vec)
+        vec_freq = []
+        for freq in vec:
+            vec_freq.append(freq / word_num)
+        tf_freq.append(vec_freq)
+    return tf_freq
+
+
+def idf_transform(tf_list: list[list[int]]) -> list[list[float]]:
+    doc_num = len(tf_list)
+    idf_matrix = [sum([1 if row[i] else 0 for row in tf_list]) for i in range(len(tf_list[0]))]
+    idf_matrix = [log((doc_num + 1) / (el + 1)) + 1 for el in idf_matrix]
+    return idf_matrix
+
+
+count_matrix = [
+    [1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0]
+]
+
+if __name__ == '__main__':
+    #print(tf_transform(count_matrix))
+    #print(idf_transform(count_matrix))
+    corpus = [
+        'Crock Pot Pasta Never boil pasta again',
+        'Pasta Pomodoro Fresh ingredients Parmesan to taste'
+    ]
+    vectorizer = TFidVectorizer()
+    count_matrix = vectorizer.fit_transform(corpus)
+    #feature_names = vectorizer.get_feature_names()
+    print(count_matrix)
+
