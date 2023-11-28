@@ -1,0 +1,9 @@
+from unittest.mock import patch
+import requests
+
+
+def test_year():
+    with patch("tes_issue_05.requests_get") as mocked_cases:
+        mocked_cases = return_value.json = lambda: 2019
+
+#Почему ругается?
