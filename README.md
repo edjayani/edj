@@ -5,6 +5,11 @@
 <h1 align="center"> issue_02 </h1>
 Запускала через edit configurations ->  + -> edit configuration templates -> pytest
 Тесты работают
-## issue_03
+<h1 align="center"> issue_03 </h1>
 Запускала через edit configurations ->  + -> edit configuration templates -> unittests
 Тесты работают, исклюение перехватывается
+<h1 align="center"> issue_04 </h1>
+Запускала через edit configurations ->  + -> edit configuration templates -> pytest
+Исключение ловится
+# issue_05
+Поняла идейно принцип mock, но ругается на return_value.json, задаю вопрос
