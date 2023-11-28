@@ -1,0 +1,51 @@
+from unittest import TestCase, main
+
+from tes_issue_03 import fit_transform
+
+
+class test_fit_trans(TestCase):
+    def test_1(self):
+        exp_transformed_cities = [
+            ('Moscow', [0, 0, 1]),
+            ('New York', [0, 1, 0]),
+            ('Moscow', [0, 0, 1]),
+            ('London', [1, 0, 0]),
+        ]
+        self.assertEqual(fit_transform(['Moscow', 'New York', 'Moscow', 'London']), exp_transformed_cities)
+
+    def test_2(self):
+        exp_transformed_cities = [
+            ('Moscow', [0, 0, 0, 1]),
+            ('New York', [0, 0, 1, 0]),
+            ('Moscow', [0, 0, 0, 1]),
+            ('London', [0, 1, 0, 0]),
+            ('Paris', [1, 0, 0, 0])
+        ]
+        self.assertEqual(fit_transform(['Moscow', 'New York', 'Moscow', 'London', 'Paris']), exp_transformed_cities)
+
+    def test_3(self):
+        exp_transformed_cities = [
+            ('Moscow', [0, 0, 0, 1]),
+            ('London', [0, 0, 1, 0]),
+            ('New York', [0, 1, 0, 0]),
+            ('Moscow', [0, 0, 0, 1]),
+            ('Paris', [1, 0, 0, 0])
+        ]
+        self.assertEqual(fit_transform(['Moscow', 'London', 'New York', 'Moscow', 'Paris']), exp_transformed_cities)
+
+    def test_4_diff_result(self):
+        exp_transformed_cities = [
+            ('Moscow', [0, 0, 1]),
+            ('New York', [0, 1, 0]),
+            ('Moscow', [0, 0, 1]),
+            ('London', [1, 0, 0]),
+        ]
+        self.assertNotEqual(fit_transform(['Moscow', 'London', 'New York', 'Moscow', 'Paris']), exp_transformed_cities)
+
+    def test_5_empty(self):
+        with self.assertRaises(TypeError):
+            fit_transform()
+
+
+if __name__ == '__main__':
+    main()
