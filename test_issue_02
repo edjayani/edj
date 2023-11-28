@@ -1,0 +1,9 @@
+from tes_issue_02 import encode
+import pytest
+
+
+@pytest.mark.parametrize("s_code, expected_result", [('SOS', '... --- ...'),
+                                                     ('A PECK OF PEPPERS', '.-   .--. . -.-. -.-   --- ..-.   .--. . .--. .--. . .-. ...'),
+                                                     ('PRIVET', '.--. .-. .. ...- . -')])
+def test_morse_encode(s_code, expected_result):
+    assert encode(s_code) == expected_result
